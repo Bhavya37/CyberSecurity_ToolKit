@@ -29,7 +29,7 @@ A web-based cybersecurity toolkit featuring password strength analysis and basic
 - Always practice responsible cybersecurity
 
 ## Contributing
-Contributions are welcome! Please read the contributing guidelines.
+Contributions are welcome! 
 
 ## License
 MIT License
