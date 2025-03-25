@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybersecurity Toolkit</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔒 Cybersecurity Toolkit</h1>
+        </header>
+
+        <nav>
+            <button onclick="showSection('password-checker')">Password Checker</button>
+            <button onclick="showSection('phishing-detector')">Phishing Detector</button>
+        </nav>
+
+        <main>
+            <!-- Password Checker Section -->
+            <section id="password-checker" class="section">
+                <h2>Password Strength Checker 🔐</h2>
+                <input type="password" id="password-input" placeholder="Enter your password">
+                <div id="password-strength-meter">
+                    <div id="strength-bar"></div>
+                </div>
+                <p id="strength-text">Password strength will be shown here</p>
+                <div id="password-suggestions"></div>
+            </section>
+
+            <!-- Phishing Detector Section -->
+            <section id="phishing-detector" class="section" style="display:none;">
+                <h2>Phishing URL Detector 🎣</h2>
+                <input type="text" id="url-input" placeholder="Enter URL to check">
+                <button onclick="checkPhishingURL()">Check URL</button>
+                <div id="url-result"></div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Educational Cybersecurity Tools - Use Responsibly</p>
+        </footer>
+    </div>
+
+    <script src="password-checker.js"></script>
+    <script src="phishing-detector.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+```
