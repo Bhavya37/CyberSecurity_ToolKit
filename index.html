@@ -9,43 +9,174 @@
 <body>
     <div class="container">
         <header>
-            <h1>🔒 Cybersecurity Toolkit</h1>
+            <h1>🛡️ Cybersecurity Toolkit</h1>
+            <p class="subtitle">Secure your digital life with advanced security tools</p>
         </header>
 
         <nav>
-            <button onclick="showSection('password-checker')">Password Checker</button>
-            <button onclick="showSection('phishing-detector')">Phishing Detector</button>
+            <button id="password-btn" class="active">🔐 Password Checker</button>
+            <button id="phishing-btn">🎣 Phishing Detector</button>
         </nav>
 
         <main>
             <!-- Password Checker Section -->
             <section id="password-checker" class="section">
-                <h2>Password Strength Checker 🔐</h2>
-                <input type="password" id="password-input" placeholder="Enter your password">
+                <h2>🔐 Password Strength Analyzer</h2>
+                <div class="input-group">
+                    <input type="password" id="password-input" placeholder="Enter your password to analyze its strength">
+                </div>
                 <div id="password-strength-meter">
                     <div id="strength-bar"></div>
                 </div>
-                <p id="strength-text">Password strength will be shown here</p>
+                <div id="strength-text">Password strength will be analyzed in real-time</div>
                 <div id="password-suggestions"></div>
             </section>
 
             <!-- Phishing Detector Section -->
-            <section id="phishing-detector" class="section" style="display:none;">
-                <h2>Phishing URL Detector 🎣</h2>
-                <input type="text" id="url-input" placeholder="Enter URL to check">
-                <button onclick="checkPhishingURL()">Check URL</button>
+            <section id="phishing-detector" class="section hidden">
+                <h2>🎣 Phishing URL Detector</h2>
+                <div class="input-group">
+                    <input type="text" id="url-input" placeholder="Enter URL to check for phishing indicators">
+                </div>
+                <button class="check-button" onclick="checkPhishingURL()">
+                    <span id="check-text">Analyze URL</span>
+                </button>
                 <div id="url-result"></div>
             </section>
         </main>
 
         <footer>
-            <p>Educational Cybersecurity Tools - Use Responsibly</p>
+            <p>🔒 Educational Cybersecurity Tools - Use Responsibly</p>
         </footer>
     </div>
 
     <script src="password-checker.js"></script>
     <script src="phishing-detector.js"></script>
     <script src="script.js"></script>
+    <script>
+        // Enhanced navigation functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const passwordBtn = document.getElementById('password-btn');
+            const phishingBtn = document.getElementById('phishing-btn');
+            const passwordSection = document.getElementById('password-checker');
+            const phishingSection = document.getElementById('phishing-detector');
+            const urlInput = document.getElementById('url-input');
+
+            // Navigation event listeners
+            passwordBtn.addEventListener('click', () => {
+                passwordBtn.classList.add('active');
+                phishingBtn.classList.remove('active');
+                passwordSection.classList.remove('hidden');
+                phishingSection.classList.add('hidden');
+            });
+
+            phishingBtn.addEventListener('click', () => {
+                phishingBtn.classList.add('active');
+                passwordBtn.classList.remove('active');
+                phishingSection.classList.remove('hidden');
+                passwordSection.classList.add('hidden');
+            });
+
+            // Add Enter key support for URL input
+            urlInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    checkPhishingURL();
+                }
+            });
+        });
+
+        // Enhanced phishing URL checker with loading state
+        function checkPhishingURL() {
+            const urlInput = document.getElementById('url-input');
+            const resultDiv = document.getElementById('url-result');
+            const checkText = document.getElementById('check-text');
+
+            const url = urlInput.value.trim();
+
+            if (!url) {
+                resultDiv.innerHTML = '<div class="error-result">⚠️ Please enter a URL to analyze</div>';
+                return;
+            }
+
+            // Show loading state
+            checkText.innerHTML = '<span class="loading"></span> Analyzing...';
+
+            // Simulate analysis delay for better UX
+            setTimeout(() => {
+                checkText.textContent = 'Analyze URL';
+                
+                try {
+                    const parsedURL = new URL(url);
+                    const domain = parsedURL.hostname;
+                    
+                    const checks = [
+                        {
+                            name: 'Suspicious Top-Level Domains',
+                            check: () => {
+                                const suspiciousTLDs = ['.tk', '.ml', '.ga', '.cf', '.gq', '.pw', '.cc'];
+                                return suspiciousTLDs.some(tld => domain.endsWith(tld));
+                            }
+                        },
+                        {
+                            name: 'Deceptive Subdomain Patterns',
+                            check: () => {
+                                const suspiciousPrefixes = ['login-', 'verify-', 'secure-', 'account-', 'update-', 'confirm-'];
+                                return suspiciousPrefixes.some(prefix => domain.includes(prefix));
+                            }
+                        },
+                        {
+                            name: 'Direct IP Address Usage',
+                            check: () => {
+                                const ipRegex = /^(\d{1,3}\.){3}\d{1,3}$/;
+                                return ipRegex.test(domain);
+                            }
+                        },
+                        {
+                            name: 'Unusually Long Domain Name',
+                            check: () => domain.length > 50
+                        },
+                        {
+                            name: 'Multiple Hyphens in Domain',
+                            check: () => (domain.match(/-/g) || []).length > 3
+                        },
+                        {
+                            name: 'URL Shortener Service',
+                            check: () => {
+                                const shorteners = ['bit.ly', 'tinyurl.com', 't.co', 'goo.gl', 'ow.ly'];
+                                return shorteners.some(shortener => domain.includes(shortener));
+                            }
+                        }
+                    ];
+
+                    const failedChecks = checks.filter(check => check.check());
+
+                    if (failedChecks.length > 0) {
+                        resultDiv.innerHTML = `
+                            <div class="danger-result">
+                                <h3>🚨 Potential Phishing URL Detected!</h3>
+                                <p><strong>Domain:</strong> ${domain}</p>
+                                <h4>⚠️ Suspicious Characteristics Found:</h4>
+                                <ul style="margin: 12px 0; padding-left: 20px;">
+                                    ${failedChecks.map(check => `<li>${check.name}</li>`).join('')}
+                                </ul>
+                                <p><strong>Recommendation:</strong> Exercise extreme caution. Do not enter personal information.</p>
+                            </div>
+                        `;
+                    } else {
+                        resultDiv.innerHTML = `
+                            <div class="safe-result">
+                                <h3>✅ URL Appears Safe</h3>
+                                <p><strong>Domain:</strong> ${domain}</p>
+                                <p><strong>Protocol:</strong> ${parsedURL.protocol}</p>
+                                <p>No obvious phishing indicators detected. However, always verify the authenticity of websites before entering sensitive information.</p>
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    resultDiv.innerHTML = '<div class="error-result">❌ Invalid URL format. Please enter a complete URL including http:// or https://</div>';
+                }
+            }, 1000);
+        }
+    </script>
 </body>
 </html>
-```
